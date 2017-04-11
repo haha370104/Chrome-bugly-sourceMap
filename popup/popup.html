@@ -1,0 +1,22 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>选择版本</title>
+</head>
+<body>
+<select onchange="selectOnChange">
+    <option value="volvo">Volvo</option>
+    <option value="saab">Saab</option>
+    <option value="opel">Opel</option>
+    <option value="audi">Audi</option>
+</select>
+</body>
+<script src="popup.js"></script>
+<script src="../lib/jquery-2.0.0.min.js"></script>
+</html>

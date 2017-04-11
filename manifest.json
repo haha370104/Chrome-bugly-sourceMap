@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "Getting started example",
+  "description": "This extension shows a Google Image search result for the current page",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "lib/jquery-2.0.0.min.js",
+        "lib/vlq.js",
+        "lib/sourceMapJson.js",
+        "content/content_script.js",
+        "content/sourceMap.js"
+      ],
+      "matches": [
+        "https://bugly.qq.com/*"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "lib/vlq.js",
+      "background/background_script.js"
+    ]
+  },
+  "permissions": [
+    "https://bugly.qq.com/*",
+    "tabs",
+    "webRequest"
+  ]
+}
