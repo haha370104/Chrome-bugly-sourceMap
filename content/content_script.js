@@ -49,14 +49,14 @@ const sendMessage = (message) => {
   })
 };
 
-const parseExceptionStack = () => {
-  let exceptionReason = $('._38UPJ0HCvsWEDOny-zMwDY ._2iGgBDqpRh7LIm9lL58dZ4 ._1tJ29qz4XbUW1oOYooxUuh').eq(0).text();
+const parseExceptionStack = async() => {
+  let exceptionReason = $(await getExceptionSelector()).eq(0).text();
 
   if (exceptionReason.indexOf('Unhandled JS Exception') === -1 && exceptionReason.indexOf('JavascriptException') === -1) {
     return;
   }
 
-  let exceptionText = $('._38UPJ0HCvsWEDOny-zMwDY ._2iGgBDqpRh7LIm9lL58dZ4 ._2FtamqAUTU4gVAw6A479iM').eq(0).text();
+  let exceptionText = $(await getExceptionStackSelector()).eq(0).text();
   let stack = exceptionText.split('\n').slice(1);
   stack.pop();
   let resultStack = [];
@@ -94,7 +94,7 @@ const fetchStackInfo = async() => {
     return;
   }
 
-  return parseExceptionStack();
+  return await parseExceptionStack();
   // resultStack.forEach((exception, index) => {
   //   console.log(mapper(exception.fun, exception.line, exception.column));
   // });
@@ -109,24 +109,69 @@ const fetchVersionInfo = async() => {
   return parsePegasusVersion()
 };
 
+const parseMinStack = (sourceMap, stack) => {
+  let resultInfos = [];
+  stackInfo.forEach((exception) => {
+    resultInfos.push(mapper(sourceMap, exception.line, exception.column));
+  });
+  return resultInfos;
+};
+
+const insertStackInDom = async(stackInfos) => {
+  let innerHTML = `</br>---------------------------------------------</br>
+     sourceMap解析后：</br>
+  `;
+  console.log(stackInfos);
+  stackInfos.forEach((stack) => {
+    innerHTML += `${stack.source}@${stack.line}:${stack.column}</br>`;
+  });
+  let exceptionDiv = $(await getExceptionStackSelector())[0];
+  exceptionDiv.innerHTML += innerHTML;
+};
+
+const insertInputInDom = async() => {
+  let errorStackDiv = $('#error_stack')[0];
+  errorStackDiv.innerHTML += '<div class="cfR1aMZlBkE_yK7jWGQ-C"><input type="file" id="sourceMapFile"/></div>';
+  document.getElementById('sourceMapFile').addEventListener('change', () => {
+    let sourceMapFile = document.getElementById('sourceMapFile').files[0];
+    let reader = new FileReader();
+    reader.readAsText(sourceMapFile);
+    reader.onload = (evt) => {
+      let sourceMap = JSON.parse(evt.target.result);
+      let resultInfos = parseMinStack(sourceMap, stackInfo);
+      insertStackInDom(resultInfos).then(() => {
+        console.log('加载成功');
+      });
+    };
+  });
+};
+
 const main = async() => {
-  let stackInfo = await fetchStackInfo();
-  console.log(stackInfo);
+  stackInfo = await fetchStackInfo();
   let extraData = $('#error_stack div[data-reactid$="跟踪数据"]')[0];
   extraData.click();
 
-  let version = await fetchVersionInfo();
+  version = await fetchVersionInfo();
+  let stackData = $('#error_stack div[data-reactid$="出错堆栈"]')[0];
+  stackData.click();
+
   try {
-    let sourceMap = await getSourceMap(version);
-    stackInfo.forEach((exception) => {
-      console.log(mapper(sourceMap, exception.line, exception.column));
-    });
+    let resultInfos;
+    try {
+      let sourceMap = await getSourceMapByGit(version);
+      resultInfos = parseMinStack(sourceMap, stackInfo);
+    } catch (e) {
+      let sourceMap = await getSourceMap();
+      resultInfos = parseMinStack(sourceMap, stackInfo);
+    }
+
+    await insertStackInDom(resultInfos);
   } catch (e) {
-    console.log('后端无法拉取，选取默认map');
-    stackInfo.forEach((exception) => {
-      console.log(mapper(sourceMapJson, exception.line, exception.column));
-    });
+    await insertInputInDom();
+    console.log('未找到对应文件，请自行上传')
   }
 };
 
+let stackInfo;
+let version;
 main();

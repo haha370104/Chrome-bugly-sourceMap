@@ -1,16 +1,17 @@
 /**
  * Created by haha370104 on 2017/4/11.
  */
-const getSourceMap = (version) => {
+const getSourceMapByGit = (version) => {
   return new Promise((resove, reject) => {
-    const baseUrl = 'http://';
-    throw new Error('123');
-    $.get(baseUrl, {version: version}, (data, status) => {
+    const url = `https://gitlab.baixing.cn/app/pegasus/raw/v${version}/ios/Assets/Pegasus.js.map`;
+    $.get(url, (data, status) => {
       if (status === 'success') {
-        resove(data);
+        resove(JSON.parse(data));
       } else {
         reject(data);
       }
+    }).fail(() => {
+      reject();
     })
   });
 };

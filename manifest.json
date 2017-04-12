@@ -12,6 +12,7 @@
         "lib/jquery-2.0.0.min.js",
         "lib/vlq.js",
         "lib/sourceMapJson.js",
+        "lib/storageHelper.js",
         "content/content_script.js",
         "content/sourceMap.js"
       ],
@@ -26,9 +27,12 @@
       "background/background_script.js"
     ]
   },
+  "options_page": "options/options.html",
   "permissions": [
     "https://bugly.qq.com/*",
+    "https://gitlab.baixing.cn/*",
     "tabs",
-    "webRequest"
+    "webRequest",
+    "storage"
   ]
 }
