@@ -1,44 +1,13 @@
+let SourceMap = require('source-map');
+
 console.log('启动');
 
 function mapper(sourceMap, line, column) {
-  let lineMap = {};
-
-  sourceMap.sections.forEach((map, index) => {
-    if (map.offset.line == line - 1) {
-      lineMap = map;
-    }
+  let smc = new SourceMap.SourceMapConsumer(sourceMap);
+  return smc.originalPositionFor({
+    line: line,
+    column: column
   });
-
-  let mappingStr = lineMap.map.mappings;
-
-  let mappingFile = mappingStr.split(';');
-  let mappingLine = [];
-  mappingFile.forEach((line, index) => {
-    mappingLine.push(line.split(','));
-  });
-  let columnNum = 0;
-  let sourceLineNum = 0;
-  let sourceFileNum = 0;
-  let sourceColumnNum = 0;
-
-  mappingLine.forEach((m, index) => {
-    for (let index in m) {
-      let mapping = m[index];
-      try {
-        let oneResult = decode(mapping);
-        columnNum += oneResult[0];
-        sourceFileNum += oneResult[1];
-        sourceLineNum += oneResult[2];
-        sourceColumnNum += oneResult[3];
-        if (columnNum == column) {
-          break;
-        }
-      } catch (e) {
-        console.log(mappingStr)
-      }
-    }
-  });
-  return {source: lineMap.map.sources[sourceFileNum], line: sourceLineNum, column: sourceColumnNum};
 }
 
 const sendMessage = (message) => {
@@ -123,7 +92,7 @@ const insertStackInDom = async(stackInfos) => {
   `;
   console.log(stackInfos);
   stackInfos.forEach((stack) => {
-    innerHTML += `${stack.source}@${stack.line}:${stack.column}</br>`;
+    innerHTML += `${stack.name}@${stack.line}:${stack.column}(${stack.source})</br>`;
   });
   let exceptionDiv = $(await getExceptionStackSelector())[0];
   exceptionDiv.innerHTML += innerHTML;

@@ -10,9 +10,8 @@
     {
       "js": [
         "lib/jquery-2.0.0.min.js",
-        "lib/vlq.js",
-        "lib/sourceMapJson.js",
         "lib/storageHelper.js",
+        "lib/source-map.js",
         "content/content_script.js",
         "content/sourceMap.js"
       ],
@@ -23,7 +22,6 @@
   ],
   "background": {
     "scripts": [
-      "lib/vlq.js",
       "background/background_script.js"
     ]
   },
