@@ -92,7 +92,7 @@ const insertStackInDom = async(stackInfos) => {
   `;
   console.log(stackInfos);
   stackInfos.forEach((stack) => {
-    innerHTML += `${stack.name}@${stack.line}:${stack.column}(${stack.source})</br>`;
+    innerHTML += `${stack.name || ''}@${stack.line}:${stack.column}(${stack.source})</br>`;
   });
   let exceptionDiv = $(await getExceptionStackSelector())[0];
   exceptionDiv.innerHTML += innerHTML;
