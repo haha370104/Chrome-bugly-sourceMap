@@ -3,15 +3,16 @@
  */
 const getSourceMapByGit = (version) => {
   return new Promise((resove, reject) => {
-    const url = getSourceMapLink(version);
-    $.get(url, (data, status) => {
-      if (status === 'success') {
-        resove(JSON.parse(data));
-      } else {
-        reject(data);
-      }
-    }).fail(() => {
-      reject();
-    })
+    getSourceMapLink(version).then((url) => {
+      $.get(url, (data, status) => {
+        if (status === 'success') {
+          resove(JSON.parse(data));
+        } else {
+          reject(data);
+        }
+      }).fail(() => {
+        reject();
+      })
+    });
   });
 };

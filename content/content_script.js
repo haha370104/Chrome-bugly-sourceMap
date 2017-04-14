@@ -91,7 +91,7 @@ const parseMinStack = (sourceMap, stack) => {
 };
 
 const insertStackInDom = async(stackInfos) => {
-  let innerHTML = `</br>---------------------------------------------</br>
+  let innerHTML = `</br>------------------------------------------------------------------------------------------</br>
      sourceMap解析后：</br>
   `;
   console.log(stackInfos);
