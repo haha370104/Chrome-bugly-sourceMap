@@ -3,7 +3,7 @@
  */
 const getSourceMapByGit = (version) => {
   return new Promise((resove, reject) => {
-    const url = `https://gitlab.baixing.cn/app/pegasus/raw/v${version}/ios/Assets/Pegasus.js.map`;
+    const url = getSourceMapLink(version);
     $.get(url, (data, status) => {
       if (status === 'success') {
         resove(JSON.parse(data));

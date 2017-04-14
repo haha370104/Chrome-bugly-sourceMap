@@ -5,6 +5,7 @@
 const submit = () => {
   let exceptionSelector = document.getElementById('exception_selector').value;
   let exceptionStackSelector = document.getElementById('exception_stack_selector').value;
+  let sourceMapLink = document.getElementById('source_map_link').value;
   let sourceMapFile = document.getElementById('source_map_file').files[0];
 
   let reader = new FileReader();
@@ -14,6 +15,7 @@ const submit = () => {
     chrome.storage.local.set({
       exceptionSelector: exceptionSelector,
       exceptionStackSelector: exceptionStackSelector,
+      sourceMapLink: sourceMapLink,
       sourceMap: sourceMap
     }, () => {
       alert('成功');
