@@ -50,7 +50,11 @@ const parseExceptionStack = async() => {
 };
 
 const parsePegasusVersion = () => {
-  let versionText = $('tr[data-reactid$="userkey0"]')[0].innerText;
+  let versionDOM = $('tr[data-reactid$="userkey0"]')[0]
+  let versionText = versionDOM && versionDOM.innerText;
+  if (!versionText) {
+    return null;
+  }
   if (versionText.indexOf('PegasusVersion') === -1 || versionText.indexOf('	') === -1) {
     return null;
   }
