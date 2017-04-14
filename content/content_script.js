@@ -121,16 +121,20 @@ const insertInputInDom = async() => {
 
 const main = async() => {
   stackInfo = await fetchStackInfo();
+
   let extraData = $('#error_stack div[data-reactid$="跟踪数据"]')[0];
   extraData.click();
-
   version = await fetchVersionInfo();
+
   let stackData = $('#error_stack div[data-reactid$="出错堆栈"]')[0];
   stackData.click();
 
   try {
     let resultInfos;
     try {
+      if (!version) {
+        throw new Error('NO Version');
+      }
       let sourceMap = await getSourceMapByGit(version);
       resultInfos = parseMinStack(sourceMap, stackInfo);
     } catch (e) {
