@@ -144,9 +144,9 @@ const main = async() => {
 
     await insertStackInDom(resultInfos);
   } catch (e) {
-    await insertInputInDom();
     console.log('未找到对应文件，请自行上传')
   }
+  await insertInputInDom();
 };
 
 let stackInfo;
