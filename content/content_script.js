@@ -18,7 +18,7 @@ const sendMessage = (message) => {
   })
 };
 
-const parseExceptionStack = async() => {
+const parseExceptionStack = async () => {
   let exceptionReason = $(await getExceptionSelector()).eq(0).text();
 
   if (exceptionReason.indexOf('Unhandled JS Exception') === -1 && exceptionReason.indexOf('JavascriptException') === -1) {
@@ -61,7 +61,7 @@ const parsePegasusVersion = () => {
   return versionText.split('	')[1];
 };
 
-const fetchStackInfo = async() => {
+const fetchStackInfo = async () => {
   let result = await sendMessage({url: document.URL, type: 'stack'});
   if (!result.result) {
     return;
@@ -73,7 +73,7 @@ const fetchStackInfo = async() => {
   // });
 };
 
-const fetchVersionInfo = async() => {
+const fetchVersionInfo = async () => {
   let result = await sendMessage({url: document.URL, type: 'version'});
   if (!result.result) {
     return;
@@ -84,13 +84,13 @@ const fetchVersionInfo = async() => {
 
 const parseMinStack = (sourceMap, stack) => {
   let resultInfos = [];
-  stackInfo.forEach((exception) => {
+  stack.forEach((exception) => {
     resultInfos.push(mapper(sourceMap, exception.line, exception.column));
   });
   return resultInfos;
 };
 
-const insertStackInDom = async(stackInfos) => {
+const insertStackInDom = async (stackInfos) => {
   let innerHTML = `</br>------------------------------------------------------------------------------------------</br>
      sourceMap解析后：</br>
   `;
@@ -102,7 +102,7 @@ const insertStackInDom = async(stackInfos) => {
   exceptionDiv.innerHTML += innerHTML;
 };
 
-const insertInputInDom = async() => {
+const insertInputInDom = async () => {
   let errorStackDiv = $('#error_stack')[0];
   errorStackDiv.innerHTML += '<div class="cfR1aMZlBkE_yK7jWGQ-C"><input type="file" id="sourceMapFile"/></div>';
   document.getElementById('sourceMapFile').addEventListener('change', () => {
@@ -119,15 +119,17 @@ const insertInputInDom = async() => {
   });
 };
 
-const main = async() => {
+const main = async () => {
   stackInfo = await fetchStackInfo();
 
-  let extraData = $('#error_stack div[data-reactid$="跟踪数据"]')[0];
-  extraData.click();
-  version = await fetchVersionInfo();
+  let extraData = $('#error_stack > div:nth-child(2)'); //跟踪数据
+  if (extraData) {
+    extraData.click();
+    version = await fetchVersionInfo();
 
-  let stackData = $('#error_stack div[data-reactid$="出错堆栈"]')[0];
-  stackData.click();
+    let stackData = $('#error_stack > div:nth-child(1)'); //出错堆栈
+    stackData.click();
+  }
 
   try {
     let resultInfos;
